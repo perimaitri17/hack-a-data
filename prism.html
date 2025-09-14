@@ -1,10 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRISM - Regulatory Integration & Submission Engine</title>
+  <title>PRISM - Pharmaceutical Regulatory Intelligence & Strategic Monitoring</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Excel parsing library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -28,7 +31,7 @@
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
-      height: 150px;
+      height: 150px; /* adjust logo size */
       width: auto;
       object-fit: contain;
       left: 0%;
@@ -37,14 +40,13 @@
     .user-section {
       position: absolute;
       right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
       background: rgba(255, 255, 255, 0.15);
-      padding: 12px 16px;
-      border-radius: 25px;
+      padding: 8px 12px;
+      border-radius: 20px;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
@@ -52,19 +54,19 @@
     
     .user-section:hover {
       background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-50%) scale(1.02);
+      transform: scale(1.02);
     }
     
     .user-avatar {
-      width: 35px;
-      height: 35px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #3e9ca8;
-      font-size: 1.2em;
+      font-size: 1em;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
@@ -163,6 +165,90 @@
     @keyframes rotate {
       from { transform: rotate(0deg); }
       to { transform: rotate(180deg); }
+    }
+
+    /* Floating Icons in Header */
+    .floating-icons {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .floating-icon {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 2em;
+      animation: float 8s ease-in-out infinite;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    
+    .ria-icon {
+      top: 15%;
+      left: 15%;
+      animation-delay: 0s;
+      animation-duration: 6s;
+    }
+    
+    .rise-icon {
+      top: 25%;
+      right: 25%;
+      animation-delay: 1s;
+      animation-duration: 7s;
+    }
+    
+    .prism-icon {
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 2s;
+      animation-duration: 8s;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.5;
+      }
+      25% {
+        transform: translateY(-15px) rotate(90deg);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translateY(-10px) rotate(180deg);
+        opacity: 0.6;
+      }
+      75% {
+        transform: translateY(-20px) rotate(270deg);
+        opacity: 0.9;
+      }
+    }
+    
+    /* Header Content Enhancement */
+    .header h1 {
+      position: relative;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      animation: titleGlow 4s ease-in-out infinite alternate;
+    }
+    
+    .header p {
+      position: relative;
+      z-index: 2;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      100% {
+        text-shadow: 2px 2px 8px rgba(255,255,255,0.2), 
+                     2px 2px 4px rgba(0,0,0,0.3);
+      }
     }
  
     /* Layout wrapper */
@@ -312,20 +398,21 @@
     .main {
       flex: 1;
       background: #f3f4f6;
-      padding: 20px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     /* PRISM Header */
     .prism-header {
       background: linear-gradient(135deg, #3e9ca8 0%, #2c7a86 50%, #1f5d68 100%);
       color: white;
-      padding: 20px 25px;
+      padding: 15px 20px;
       border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       position: relative;
-      box-shadow: 0 6px 24px rgba(62, 156, 168, 0.25);
+      box-shadow: 0 4px 16px rgba(62, 156, 168, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
       overflow: hidden;
@@ -345,7 +432,7 @@
 
     .prism-header h1 {
       margin: 0;
-      font-size: 1.9em;
+      font-size: 1.6em;
       font-weight: 600;
       letter-spacing: -0.3px;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -355,7 +442,7 @@
     }
 
     .prism-header h1::before {
-      content: '\f0e7';
+      content: '\f1c0';
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
       font-size: 0.75em;
@@ -367,644 +454,709 @@
     }
 
     .prism-header p {
-      margin: 8px 0 0 0;
-      font-size: 0.95em;
+      margin: 6px 0 0 0;
+      font-size: 0.9em;
       opacity: 0.92;
       font-weight: 400;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
       letter-spacing: 0.2px;
     }
 
-    /* Section Styling */
-    .section {
+    /* Data Table Styles */
+    .data-table-container {
       background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      overflow: hidden;
     }
 
-    .section h3 {
-      margin: 0 0 15px 0;
-      color: #333;
-      border-bottom: 2px solid #3e9ca8;
-      padding-bottom: 10px;
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .table-header h2 {
+      margin: 0;
+      color: #1e293b;
+      font-size: 1.3em;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    /* Upcoming Deadlines - New Layout */
-    .deadlines-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .deadlines-row {
-      display: flex;
-      gap: 20px;
-    }
-
-    .deadline-item {
-      flex: 1;
-      padding: 15px;
-      border: 1px solid #e0e0e0;
-      border-radius: 5px;
-      background: #f9f9f9;
-    }
-
-    .deadline-title {
+    .table-header h2 i {
       color: #3e9ca8;
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 5px;
+      font-size: 1.1em;
     }
 
-    .deadline-code {
-      color: #666;
-      font-size: 13px;
-      margin-bottom: 5px;
-    }
-
-    .deadline-date {
-      color: #666;
-      font-size: 13px;
-    }
-
-    /* Filters - New Layout */
-    .filters-row {
-      display: flex;
-      gap: 20px;
-    }
-
-    .filter-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .filter-group label {
-      font-weight: bold;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .filter-group select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      background: white;
-    }
-
-    /* Impact Summary */
-    .impact-summary {
-      background: #e8f5e8;
-      padding: 15px;
-      border-radius: 5px;
-      color: #333;
-      line-height: 1.5;
-      font-size: 14px;
-      border-left: 4px solid #22c55e;
-    }
-
-    /* Workflow Styles */
-    .workflow-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #3e9ca8;
-      padding-bottom: 10px;
-    }
-
-    .submission-info {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .submission-id {
-      background: #3e9ca8;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .submission-details {
-      background: #f97316;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .milestone-section {
-      margin-bottom: 15px;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .milestone-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background: #f8f9fa;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .milestone-header:hover {
-      background: #e9ecef;
-    }
-
-    .milestone-info {
+    .table-controls {
       display: flex;
       align-items: center;
       gap: 15px;
-    }
-
-    .milestone-number {
-      background: #22c55e;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      min-width: 80px;
-      text-align: center;
-    }
-
-    .milestone-title {
-      font-weight: bold;
-      color: #333;
-      font-size: 16px;
-    }
-
-    .milestone-status {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .milestone-status-select {
-      padding: 6px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      background: white;
-      cursor: pointer;
-    }
-
-    .milestone-status-select:disabled {
-      background: #f5f5f5;
-      color: #999;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .milestone-status-select.status-complete {
-      background: #22c55e;
-      color: white;
-      border-color: #22c55e;
-    }
-
-    .milestone-status-select.status-ongoing {
-      background: #fbbf24;
-      color: white;
-      border-color: #fbbf24;
-    }
-
-    .milestone-status-select.status-yet-to-start {
-      background: #f97316;
-      color: white;
-      border-color: #f97316;
-    }
-
-    .milestone-status-select option[value="complete"] {
-      background: #22c55e;
-      color: white;
-    }
-
-    .milestone-status-select option[value="ongoing"] {
-      background: #fbbf24;
-      color: white;
-    }
-
-    .milestone-status-select option[value="yet-to-start"] {
-      background: #f97316;
-      color: white;
-    }
-
-    .status-badge {
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .status-badge.complete {
-      background: #22c55e;
-      color: white;
-    }
-
-    .status-badge.ongoing {
-      background: #fbbf24;
-      color: white;
-    }
-
-    .status-badge.yet-to-start {
-      background: #f97316;
-      color: white;
-    }
-
-    .toggle-icon {
-      color: #666;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 3px;
-      transition: background-color 0.2s;
-    }
-
-    .toggle-icon:hover {
-      background-color: rgba(0,0,0,0.1);
-    }
-
-    .milestone-content {
-      padding: 0;
-      background: white;
-      display: block;
-    }
-
-    .milestone-section:not(.expanded) .milestone-content {
-      display: none;
-    }
-
-    .task-item {
-      display: flex;
-      align-items: center;
-      padding: 15px 20px;
-      border-bottom: 1px solid #f0f0f0;
-      gap: 20px;
-    }
-
-    .task-item:last-child {
-      border-bottom: none;
-    }
-
-    .task-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex: 2;
-    }
-
-    .task-icon {
-      color: #666;
-      font-size: 8px;
-    }
-
-    .task-details {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .task-name {
-      font-weight: bold;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .task-meta {
-      display: flex;
-      gap: 20px;
-      font-size: 12px;
-      color: #666;
-    }
-
-    .task-dates {
-      display: flex;
-      gap: 30px;
-      flex: 1;
-    }
-
-    .date-column {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .date-label {
-      font-weight: bold;
-      color: #333;
-      font-size: 12px;
-    }
-
-    .date-value {
-      color: #666;
-      font-size: 12px;
-    }
-
-    .task-metrics {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .metric-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-    }
-
-    .metric-number {
-      font-weight: bold;
-      color: #333;
-    }
-
-    .metric-item i {
-      color: #666;
-      font-size: 12px;
-    }
-
-    .status-select {
-      padding: 2px 6px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      font-size: 11px;
-      background: white;
-    }
-
-    /* Query Tracker Styles */
-    .query-table-container {
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow-x: auto;
-    }
-
-    .query-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .query-table th {
-      background: linear-gradient(135deg, #3e9ca8, #2c7a7e);
-      color: white;
-      padding: 12px 8px;
-      text-align: left;
-      font-weight: 600;
-      white-space: nowrap;
-      font-size: 12px;
-    }
-
-    .query-table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #eee;
-      vertical-align: top;
-      max-width: 200px;
-    }
-
-    .query-table tr:hover {
-      background-color: #f8f9fa;
-    }
-
-    .query-table tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-
-    .status-badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-      display: inline-block;
-      min-width: 40px;
-      text-align: center;
-    }
-
-    .status-badge.wip {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
-
-    .dot:hover {
-      background: #999;
-    }
-
-    /* Upcoming Deadlines */
-    .deadlines-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-
-    .deadline-item {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 15px;
-    }
-
-    .deadline-item h4 {
-      margin: 0 0 10px 0;
-      color: #2563eb;
-      font-size: 0.9em;
-    }
-
-    .deadline-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 0.85em;
-    }
-
-    .deadline-date {
-      color: #dc2626;
-      font-weight: bold;
-    }
-
-    /* Filters */
-    .filters-section {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-    }
-
-    .filters-row {
-      display: flex;
-      gap: 15px;
-      align-items: center;
       flex-wrap: wrap;
     }
 
-    .filter-group {
+    /* Search Container Styles */
+    .search-container {
       display: flex;
       flex-direction: column;
-      min-width: 150px;
+      gap: 8px;
+      flex: 1;
+      max-width: 400px;
     }
 
-    .filter-group label {
-      font-size: 0.9em;
-      color: #666;
-      margin-bottom: 5px;
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    .filter-group select {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9em;
-    }
-
-    /* Submissions by Stage */
-    .submissions-table {
+    .global-search-input {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
+      padding: 12px 45px 12px 40px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      background: white;
+      transition: all 0.3s ease;
+      outline: none;
+      color: #334155;
+      font-weight: 500;
     }
 
-    .submissions-table th {
-      background: #f8f9fa;
+    .global-search-input:focus {
+      border-color: #3e9ca8;
+      box-shadow: 0 0 0 3px rgba(62, 156, 168, 0.1);
+      background: #fefefe;
+    }
+
+    .global-search-input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      color: #64748b;
+      font-size: 16px;
+      pointer-events: none;
+      transition: color 0.3s ease;
+    }
+
+    .global-search-input:focus + .search-icon {
+      color: #3e9ca8;
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-search-btn:hover {
+      background: #f1f5f9;
+      color: #ef4444;
+    }
+
+    .search-stats {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+      margin-left: 2px;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, #3e9ca8 0%, #2c7a7b 100%);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.8em;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(62, 156, 168, 0.3);
+    }
+
+    .btn-export:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(62, 156, 168, 0.4);
+    }
+
+    .search-input {
+      padding: 8px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 0.8em;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3e9ca8;
+      box-shadow: 0 0 0 2px rgba(62, 156, 168, 0.1);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 500px;
+      overflow-y: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table {
+      width: 100%;
+      min-width: 1400px;
+      border-collapse: collapse;
+      font-size: 0.85em;
+      background: white;
+    }
+
+    .data-table thead {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .data-table th {
       padding: 12px 8px;
       text-align: left;
-      font-size: 0.85em;
-      border: 1px solid #ddd;
-      font-weight: bold;
-    }
-
-    .submissions-table td {
-      padding: 12px 8px;
-      border: 1px solid #ddd;
-      font-size: 0.85em;
-    }
-
-    .submissions-table tr:nth-child(even) {
-      background: #f9f9f9;
-    }
-
-    .stage-indicator {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
       font-size: 0.75em;
-      font-weight: bold;
-      color: white;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      white-space: nowrap;
+      vertical-align: middle;
     }
 
-    .stage-pending { background: #fbbf24; }
-    .stage-review { background: #3b82f6; }
-    .stage-approval { background: #10b981; }
-    .stage-launch { background: #8b5cf6; }
+    /* Specific column widths for better layout */
+    .data-table th:nth-child(1) { width: 120px; } /* Therapeutic Area */
+    .data-table th:nth-child(2) { width: 140px; } /* Drug */
+    .data-table th:nth-child(3) { width: 80px; }  /* Dosage */
+    .data-table th:nth-child(4) { width: 70px; }  /* Market */
+    .data-table th:nth-child(5) { width: 180px; } /* Document Name */
+    .data-table th:nth-child(6) { width: 120px; } /* Document ID */
+    .data-table th:nth-child(7) { width: 90px; }  /* Approved Version */
+    .data-table th:nth-child(8) { width: 130px; } /* Document Status */
+    .data-table th:nth-child(9) { width: 140px; } /* Document Owner */
+    .data-table th:nth-child(10) { width: 120px; } /* Submission ID */
+    .data-table th:nth-child(11) { width: 150px; } /* Submission Workflow Step */
+    .data-table th:nth-child(12) { width: 140px; } /* Submission Workflow Step Status */
+    .data-table th:nth-child(13) { width: 160px; } /* Submission Milestone */
+    .data-table th:nth-child(14) { width: 140px; } /* Submission Milestone Status */
 
-    .progress-bar {
-      width: 100%;
-      height: 20px;
-      background: #e5e7eb;
-      border-radius: 10px;
+    .data-table th:last-child {
+      border-right: none;
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .data-table tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .data-table tbody tr:nth-child(even):hover {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .data-table td {
+      padding: 10px 8px;
+      border-right: 1px solid #e2e8f0;
+      vertical-align: middle;
+      font-size: 0.85em;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+
+    .data-table td:last-child {
+      border-right: none;
+    }
+
+    /* Text truncation for long content */
+    .data-table td:nth-child(5), /* Document Name */
+    .data-table td:nth-child(9), /* Document Owner */
+    .data-table td:nth-child(11), /* Workflow Step */
+    .data-table td:nth-child(13) { /* Milestone */
+      max-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-table td:nth-child(5):hover,
+    .data-table td:nth-child(9):hover,
+    .data-table td:nth-child(11):hover,
+    .data-table td:nth-child(13):hover {
+      overflow: visible;
+      white-space: normal;
+      word-wrap: break-word;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Column Filter Styles */
+    .filter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-header {
+      font-weight: 600;
+      font-size: 0.8em;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .column-filter {
+      width: 90%;
+      max-width: 120px;
+      padding: 3px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 0.7em;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .column-filter:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .column-filter:focus {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: #4ecdc4;
+      box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .column-filter option {
+      background: #34495e;
+      color: white;
+      padding: 4px 8px;
+      border: none;
+    }
+
+    .column-filter option:hover {
+      background: #4ecdc4;
+    }
+
+    /* Update table header to accommodate better filter design */
+    .data-table th {
+      padding: 12px 8px 16px 8px;
+      vertical-align: top;
+      min-height: 80px;
+      position: relative;
+    }
+
+    /* Responsive adjustments for smaller columns */
+    .data-table th:nth-child(3) .column-filter,  /* Dosage */
+    .data-table th:nth-child(4) .column-filter,  /* Market */
+    .data-table th:nth-child(6) .column-filter,  /* Document ID */
+    .data-table th:nth-child(7) .column-filter,  /* Approved Version */
+    .data-table th:nth-child(10) .column-filter { /* Submission ID */
+      max-width: 80px;
+      font-size: 0.65em;
+    }
+
+    /* Wider filters for text-heavy columns */
+    .data-table th:nth-child(5) .column-filter,  /* Document Name */
+    .data-table th:nth-child(11) .column-filter, /* Workflow Step */
+    .data-table th:nth-child(13) .column-filter { /* Milestone */
+      max-width: 140px;
+    }
+
+    /* Active filter indicator */
+    .column-filter.active {
+      background: rgba(78, 205, 196, 0.3);
+      border-color: #4ecdc4;
+      box-shadow: 0 0 0 1px rgba(78, 205, 196, 0.5);
+    }
+
+    .filter-container.has-filter .filter-header {
+      color: #4ecdc4;
+      text-shadow: 0 0 3px rgba(78, 205, 196, 0.3);
+    }
+
+    /* Filter reset button */
+    .filter-reset {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 107, 107, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 0.7em;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .filter-reset:hover {
+      background: rgba(255, 107, 107, 1);
+      transform: scale(1.1);
+    }
+
+    .filter-reset.show {
+      display: flex;
+    }
+
+    /* Clear filters button */
+    .btn-clear-filters {
+      background: linear-gradient(135deg, #ff6b6b, #ff5252);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 8px;
+    }
+
+    .btn-clear-filters:hover {
+      background: linear-gradient(135deg, #ff5252, #f44336);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-clear-filters i {
+      margin-right: 6px;
+    }
+
+    /* Export button enhancements */
+    .btn-export {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
       overflow: hidden;
     }
 
-    .progress-fill {
-      height: 100%;
-      background: #22c55e;
-      transition: width 0.3s ease;
+    .btn-export:hover {
+      background: linear-gradient(135deg, #44a08d, #4ecdc4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(78, 205, 196, 0.3);
     }
 
-    /* Query Tracker */
-    .query-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
+    .btn-export:active {
+      transform: translateY(0);
     }
 
-    .query-item {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 15px;
+    .btn-export i {
+      margin-right: 6px;
     }
 
-    .query-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+    /* Status badges */
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      display: inline-block;
+      white-space: nowrap;
+      text-align: center;
+      min-width: 70px;
     }
 
-    .query-title {
-      font-weight: bold;
-      font-size: 0.9em;
-      color: #333;
+    .status.approved {
+      background: #10b981;
+      color: white;
     }
 
-    .query-status {
-      padding: 3px 8px;
+    .status.pending {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .status.rejected {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Workflow Status badges */
+    .workflow-status {
+      padding: 3px 6px;
+      border-radius: 8px;
+      font-size: 0.65em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      display: inline-block;
+      white-space: nowrap;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .workflow-status.in-progress {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .workflow-status.pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .workflow-status.on-hold {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .workflow-status.completed {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* Milestone Status badges */
+    .milestone-status {
+      padding: 3px 6px;
+      border-radius: 8px;
+      font-size: 0.65em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      display: inline-block;
+      white-space: nowrap;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .milestone-status.completed {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .milestone-status.in-progress {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .milestone-status.delayed {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .milestone-status.scheduled {
+      background: #f3e8ff;
+      color: #7c3aed;
+    }
+
+    /* Priority badges */
+    .priority {
+      padding: 4px 10px;
       border-radius: 12px;
       font-size: 0.75em;
-      font-weight: bold;
+      font-weight: 600;
+    }
+
+    .priority.high {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .priority.medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .priority.low {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* Score badges */
+    .score {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 700;
+    }
+
+    .score.excellent {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .score.good {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .score.needs-improvement {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    /* Action buttons */
+    .btn-action {
+      background: none;
+      border: 1px solid #e2e8f0;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #64748b;
+      margin-right: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: #3e9ca8;
       color: white;
+      border-color: #3e9ca8;
     }
 
-    .status-standard { background: #6b7280; }
-    .status-overdue { background: #ef4444; }
-
-    .query-details {
-      font-size: 0.85em;
-      color: #666;
-      line-height: 1.4;
-    }
-
-    /* Stage Progress */
-    .stage-section {
-      margin: 15px 0;
-    }
-
-    .stage-header {
+    /* Pagination */
+    .table-pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f1f5f9;
-      padding: 10px 15px;
+      padding: 20px 30px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .pagination-info {
+      color: #64748b;
+      font-size: 0.9em;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pagination-btn, .page-btn {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 8px 12px;
       border-radius: 6px;
-      margin-bottom: 10px;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s ease;
     }
 
-    .stage-name {
-      font-weight: bold;
-      color: #334155;
-    }
-
-    .stage-status {
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.8em;
-      font-weight: bold;
+    .pagination-btn:hover, .page-btn:hover {
+      background: #3e9ca8;
       color: white;
+      border-color: #3e9ca8;
     }
 
-    .status-pending { background: #f59e0b; }
-    .status-not-started { background: #6b7280; }
+    .page-btn.active {
+      background: #3e9ca8;
+      color: white;
+      border-color: #3e9ca8;
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination-btn:disabled:hover {
+      background: white;
+      color: #64748b;
+      border-color: #e2e8f0;
+    }
+
+    /* Content Area - Currently Blank */
+    .content-area {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .placeholder-content {
+      text-align: center;
+      color: #666;
+    }
+
+    .placeholder-content i {
+      font-size: 4em;
+      color: #3e9ca8;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .placeholder-content h2 {
+      margin: 0 0 10px 0;
+      color: #333;
+      font-size: 1.5em;
+    }
+
+    .placeholder-content p {
+      margin: 0;
+      font-size: 1.1em;
+      opacity: 0.7;
+    }
 
     /* Footer */
     footer {
@@ -1013,43 +1165,97 @@
       padding: 5px;
       text-align: center;
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
     }
+    
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+    
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .footer-brand i {
+      color: #3e9ca8;
+      font-size: 16px;
+    }
+    
+    .footer-text {
+      font-size: 11px;
+      opacity: 0.8;
+      font-style: italic;
+      margin: 2px 0;
+    }
+    
     .footer-icons {
-      margin-top: 10px;
+      margin: 6px 0;
     }
+    
     .footer-icons a {
       color: white;
-      margin: 0 10px;
-      font-size: 20px;
+      margin: 0 8px;
+      font-size: 18px;
       text-decoration: none;
       transition: all 0.3s ease;
+      display: inline-block;
     }
+    
     .footer-icons a:hover {
-      color: #bdc3c7;
-      transform: translateY(-2px);
+      color: #3e9ca8;
+      transform: translateY(-2px) scale(1.1);
     }
-
-    /* Content Grid */
-    .content-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-    }
-
-    .left-content {
+    
+    .footer-bottom {
+      font-size: 10px;
+      opacity: 0.7;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .footer-bottom .separator {
+      color: #3e9ca8;
+      font-weight: bold;
     }
 
-    .right-content {
-      display: flex;
-      flex-direction: column;
+    /* S3 Loading Spinner Animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <!-- Header -->
   <div class="header">
+    <!-- Floating Background Icons -->
+    <div class="floating-icons">
+      <div class="floating-icon ria-icon"><i class="fas fa-robot"></i></div>
+      <div class="floating-icon rise-icon"><i class="fas fa-bolt"></i></div>
+      <div class="floating-icon prism-icon"><i class="fas fa-database"></i></div>
+    </div>
+    
     <!-- Logo in top-left -->
     <img src="footer-logo.png" alt="Logo">
     <h1>Automated Unified Regulatory Assistant</h1>
@@ -1079,13 +1285,13 @@
  
   <!-- Content -->
   <div class="content-wrapper">
-   <!-- Sidebar -->
+    <!-- Sidebar -->
     <div class="sidebar">
-      <a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a>
-      <a href="ria.html"><i class="fa-solid fa-robot"></i> RIA</a>
-      <a href="rise.html"><i class="fa-solid fa-bolt"></i> RISE</a>
-      <a href="prism.html"><i class="fa-solid fa-database"></i> PRISM</a>
-            
+      <a href="home.html"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="Ria.html"><i class="fa-solid fa-robot"></i> RIA</a>
+      <a href="Rise.html"><i class="fa-solid fa-bolt"></i> RISE</a>
+      <a href="Prism.html" class="active"><i class="fa-solid fa-database"></i> PRISM</a>
+      
       <!-- Quick Stats KPIs -->
       <div class="quick-stats">
         <div class="stats-header">
@@ -1118,7 +1324,7 @@
         </div>
         
         <div class="stat-item">
-          <div class="stat-label">On-Time</div>
+          <div class="stat-label">Risk Score</div>
           <div class="stat-value">94.1%</div>
           <div class="stat-change negative">
             <i class="fas fa-arrow-down"></i> 1.2%
@@ -1131,848 +1337,1066 @@
     <div class="main">
       <!-- PRISM Header -->
       <div class="prism-header">
-        <h1>Regulatory Integration & Submission Engine</h1>
-        <p>RISE - Workflow management and regulatory milestone tracking system</p>
+        <h1>Product Regulatory Information & Submission Management</h1>
+        <p>PRISM - Comprehensive product portolio and regulatory information management</p>
       </div>
 
-      <!-- Upcoming Deadlines -->
-      <div class="section">
-        <h3><i class="fa-solid fa-calendar-alt"></i> UPCOMING DEADLINES</h3>
-        <div class="deadlines-container">
-          <div class="deadlines-row">
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
+      <!-- Data Table Section -->
+      <div class="data-table-container">
+        <div class="table-header">
+          <h2><i class="fas fa-table"></i> Pharmaceutical Regulatory Document & Submission Management</h2>
+          <div class="table-controls">
+            <div class="search-container">
+              <div class="search-input-wrapper">
+                <input type="text" id="globalSearchInput" placeholder="Search across all columns..." class="global-search-input">
+                <i class="fas fa-search search-icon"></i>
+                <button class="clear-search-btn" id="clearSearchBtn" style="display: none;">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="search-stats" id="searchStats"></div>
             </div>
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
-            </div>
-          </div>
-          <div class="deadlines-row">
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
-            </div>
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
-            </div>
-          </div>
-          <div class="deadlines-row">
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
-            </div>
-            <div class="deadline-item">
-              <div class="deadline-title">BLA Review - NeuroRestore</div>
-              <div class="deadline-code">SID000045</div>
-              <div class="deadline-date">Due: 21-Aug-2025</div>
+            <div class="action-buttons">
+              <button class="btn-export" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+              <button class="btn-clear-filters" id="clearFiltersBtn" style="display: none;"><i class="fas fa-times"></i> Clear Filters</button>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="section">
-        <h3><i class="fa-solid fa-filter"></i> FILTERS</h3>
-        <div class="filters-row">
-          <div class="filter-group">
-            <label>Therapeutic Area</label>
-            <select>
-              <option>Select Therapeutic Area</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Brand</label>
-            <select>
-              <option>Select Brand</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Dosage</label>
-            <select>
-              <option>Select Dosage</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Market</label>
-            <select>
-              <option>Select Market</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Impact Summary -->
-      <div class="section">
-        <h3>Impact Summary:</h3>
-        <div class="impact-summary">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.
-        </div>
-      </div>
-
-      <!-- Submissions by Stage Workflow -->
-      <div class="section">
-        <div class="workflow-header">
-          <h3><i class="fa-solid fa-sitemap"></i> SUBMISSIONS BY STAGE</h3>
-          <div class="submission-info">
-            <span class="submission-id">Submission ID - SID000045</span>
-            <span class="submission-details">Oncology - Oncosure - 500mg - France</span>
-          </div>
-        </div>
-
-        <!-- Milestone 1: Strategy Planning & Research -->
-        <div class="milestone-section expanded" data-milestone="1">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 1</span>
-              <span class="milestone-title">Strategy Planning & Research</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-ongoing" onchange="updateMilestoneStatus(1, this.value)">
-                <option value="ongoing">Ongoing</option>
-                <option value="complete">Complete</option>
-              </select>
-              <i class="fa-solid fa-chevron-up toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Pre-Submission Planning</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Wilson Paul</span>
-                    <span class="progress">Progress: &nbsp;</span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">05-08-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-08-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Clinical Trials Data</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Wilson Paul</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>In Progress</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">05-08-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-08-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Chemistry, Manufacturing, and Controls (CMC)</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Wilson Paul</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">05-08-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-08-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Milestone 2: Regulatory Strategy & Consultation -->
-        <div class="milestone-section" data-milestone="2">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 2</span>
-              <span class="milestone-title">Regulatory Strategy & Consultation</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-yet-to-start" disabled>
-                <option value="yet-to-start">Yet-to-Start</option>
-              </select>
-              <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Regulatory Affairs Documentation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Sarah Mitchell</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>In Progress</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">16-08-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">30-09-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Regulatory Consultation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: David Chen</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">20-08-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-10-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Milestone 3: Submission Assembly & Dispatch -->
-        <div class="milestone-section" data-milestone="3">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 3</span>
-              <span class="milestone-title">Dossier Preparation</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-yet-to-start" disabled>
-                <option value="yet-to-start">Yet-to-Start</option>
-              </select>
-              <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Labeling and Packaging Documentation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Robert Kim</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">01-11-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-11-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Pharmacovigilance Data</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Emily Zhang</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">10-11-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">25-11-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Dossier Update & Document Preparation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Dr. Amanda Foster</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">20-11-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">30-11-2025</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Milestone 4: Submission Assembly -->
-        <div class="milestone-section" data-milestone="4">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 4</span>
-              <span class="milestone-title">Submission Assembly</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-yet-to-start" disabled>
-                <option value="yet-to-start">Yet-to-Start</option>
-              </select>
-              <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Regulatory Submission Compilation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: James Wilson</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">01-12-2025</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">31-01-2026</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Submission Compilation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Dr. Patricia Lee</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">15-01-2026</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">28-02-2026</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Milestone 5: Regulatory Interaction -->
-        <div class="milestone-section" data-milestone="5">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 5</span>
-              <span class="milestone-title">Regulatory Interaction</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-yet-to-start" disabled>
-                <option value="yet-to-start">Yet-to-Start</option>
-              </select>
-              <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Submission to Regulatory Authority</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Mark Johnson</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">01-03-2026</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">15-03-2026</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Review & Response to Queries</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Rachel Green</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">10-03-2026</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">30-04-2026</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Milestone 6: Post Approval -->
-        <div class="milestone-section" data-milestone="6">
-          <div class="milestone-header">
-            <div class="milestone-info">
-              <span class="milestone-number">Milestone 6</span>
-              <span class="milestone-title">Approval and PLC Management</span>
-            </div>
-            <div class="milestone-status">
-              <select class="milestone-status-select status-yet-to-start" disabled>
-                <option value="yet-to-start">Yet-to-Start</option>
-              </select>
-              <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </div>
-          </div>
-          
-          <div class="milestone-content">
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Approval & Implementation</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Dr. Kevin Murphy</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">01-05-2026</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">31-05-2026</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-info">
-                <i class="fa-solid fa-circle task-icon"></i>
-                <div class="task-details">
-                  <div class="task-name">Post-Approval Monitoring</div>
-                  <div class="task-meta">
-                    <span class="owner">Owner: Dr. Helen Clark</span>
-                    <span class="progress">Sub Status: <select class="status-select"><option>Yet-to-Start</option></select></span>
-                  </div>
-                </div>
-              </div>
-              <div class="task-dates">
-                <div class="date-column">
-                  <div class="date-label">Start Date</div>
-                  <div class="date-value">15-05-2026</div>
-                </div>
-                <div class="date-column">
-                  <div class="date-label">End Date</div>
-                  <div class="date-value">Ongoing</div>
-                </div>
-              </div>
-              <div class="task-metrics">
-                <div class="metric-item">
-                  <i class="fa-solid fa-info-circle"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Query Tracker -->
-      <div class="section">
-        <h3><i class="fa-solid fa-question-circle"></i> QUERY TRACKER</h3>
-        <div class="query-table-container">
-          <table class="query-table">
+        
+        <div class="table-wrapper">
+          <table class="data-table" id="prismDataTable">
             <thead>
               <tr>
-                <th>Query ID</th>
-                <th>Query Description</th>
-                <th>Submission ID</th>
-                <th>Brand</th>
-                <th>Dosage</th>
-                <th>Market</th>
-                <th>Agency</th>
-                <th>Received Date</th>
-                <th>Due Date</th>
-                <th>Status</th>
-                <th>Owner</th>
-                <th>Document ID</th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Therapeutic Area</div>
+                    <select class="column-filter" data-column="0">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Drug</div>
+                    <select class="column-filter" data-column="1">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Dosage</div>
+                    <select class="column-filter" data-column="2">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Market</div>
+                    <select class="column-filter" data-column="3">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Document Name</div>
+                    <select class="column-filter" data-column="4">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Document ID</div>
+                    <select class="column-filter" data-column="5">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Approved Version</div>
+                    <select class="column-filter" data-column="6">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Document Status</div>
+                    <select class="column-filter" data-column="7">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Document Owner</div>
+                    <select class="column-filter" data-column="8">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Submission ID</div>
+                    <select class="column-filter" data-column="9">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Submission Workflow Step</div>
+                    <select class="column-filter" data-column="10">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Submission Workflow Step Status</div>
+                    <select class="column-filter" data-column="11">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Submission Milestone</div>
+                    <select class="column-filter" data-column="12">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
+                <th>
+                  <div class="filter-container">
+                    <div class="filter-header">Submission Milestone Status</div>
+                    <select class="column-filter" data-column="13">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="prism-data-tbody">
+              <!-- Data will be loaded from prism_data.html -->
               <tr>
-                <td>QID001</td>
-                <td>Confirm that your stability-indicating analytical methods have been validated per ICH Q2(R2), including forced degradation studies</td>
-                <td>SID09020</td>
-                <td>Nocoaralyn</td>
-                <td>50mg</td>
-                <td>EU</td>
-                <td>FDA</td>
-                <td>12-09-2025</td>
-                <td>12-10-2025</td>
-                <td><span class="status-badge wip">WIP</span></td>
-                <td>S. Menon</td>
-                <td>DID30459</td>
-              </tr>
-              <tr>
-                <td>QID002</td>
-                <td>What is your control strategy for dissolution?</td>
-                <td>SID09020</td>
-                <td>Nocoaralyn</td>
-                <td>50mg</td>
-                <td>JP</td>
-                <td>FDA</td>
-                <td>12-09-2025</td>
-                <td>12-10-2025</td>
-                <td><span class="status-badge wip">WIP</span></td>
-                <td>S. Menon</td>
-                <td>DID30459</td>
+                <td colspan="14" style="text-align: center; padding: 40px;">
+                  <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i>
+                  Loading pharmaceutical data...
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+        
+        <div class="table-pagination">
+          <div class="pagination-info">
+            Showing 1-552 of 552 entries
+          </div>
+          <div class="pagination-controls">
+            <button class="pagination-btn" onclick="previousPage()"><i class="fas fa-chevron-left"></i></button>
+            <span class="page-numbers">
+              <button class="page-btn active">1</button>
+            </span>
+            <button class="pagination-btn" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
  
   <!-- Footer -->
   <footer>
-    <p>Contact Us</p>
-    <div class="footer-icons">
-      <a href="#"><i class="fab fa-linkedin"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-github"></i></a>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <i class="fas fa-shield-alt"></i>
+        <span>AURA Platform</span>
+      </div>
+      <div class="footer-text">Regulatory Excellence â€¢ Global Compliance â€¢ Smart Analytics</div>
     </div>
-    <p>&copy; 2025 AURA. All Rights Reserved.</p>
+    <div class="footer-icons">
+      <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+      <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 AURA Platform</span>
+      <span class="separator">â€¢</span>
+      <span>Pharmaceutical Intelligence</span>
+    </div>
   </footer>
 
+  <!-- S3 Data Integration - Excel file loaded dynamically from AWS S3 -->
+  
   <script>
-    // Milestone toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const milestoneHeaders = document.querySelectorAll('.milestone-header');
+    // Global variables
+    let allData = [];
+    let filteredData = [];
+    let currentFilters = {};
+    let globalSearchTerm = '';
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    // Function to convert data to CSV format
+    function convertToCSV(data, headers) {
+      const csvHeaders = headers.join(',');
+      const csvRows = data.map(row => {
+        return row.map(cell => {
+          // Handle cells with commas, quotes, or line breaks
+          if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+            return `"${cell.replace(/"/g, '""')}"`;
+          }
+          return cell;
+        }).join(',');
+      });
       
-      milestoneHeaders.forEach(header => {
-        header.addEventListener('click', function(e) {
-          // Don't toggle if clicking on the select dropdown
-          if (e.target.tagName === 'SELECT') return;
+      return [csvHeaders, ...csvRows].join('\n');
+    }
+
+    // Function to download file
+    function downloadFile(content, filename, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Function to export data to Excel (CSV format)
+    function exportToExcel() {
+      try {
+        // Get current date for filename
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+        const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS format
+        
+        // Define headers
+        const headers = [
+          'Therapeutic Area',
+          'Drug',
+          'Dosage',
+          'Market',
+          'Document Name',
+          'Document ID',
+          'Approved Version',
+          'Document Status',
+          'Document Owner',
+          'Submission ID',
+          'Submission Workflow Step',
+          'Submission Workflow Step Status',
+          'Submission Milestone',
+          'Submission Milestone Status'
+        ];
+
+        // Use filtered data if filters are applied, otherwise use all data
+        const dataToExport = filteredData.length > 0 ? filteredData : allData;
+        
+        if (dataToExport.length === 0) {
+          alert('No data to export');
+          return;
+        }
+
+        // Convert to CSV format
+        const csvContent = convertToCSV(dataToExport, headers);
+        
+        // Generate filename based on filters
+        let filename = 'Pharmaceutical_Regulatory_Data';
+        
+        // Add filter info to filename if filters are active
+        const activeFilters = Object.keys(currentFilters);
+        if (activeFilters.length > 0) {
+          filename += '_Filtered';
+          // Add first filter value to filename for clarity
+          const firstFilter = currentFilters[activeFilters[0]];
+          if (firstFilter.length <= 20) {
+            filename += `_${firstFilter.replace(/[^a-zA-Z0-9]/g, '_')}`;
+          }
+        }
+        
+        filename += `_${dateStr}_${timeStr}.csv`;
+        
+        // Download the file
+        downloadFile(csvContent, filename, 'text/csv;charset=utf-8;');
+        
+        // Show success message
+        const exportBtn = document.getElementById('exportBtn');
+        const originalText = exportBtn.innerHTML;
+        exportBtn.innerHTML = '<i class="fas fa-check"></i> Exported!';
+        exportBtn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        
+        setTimeout(() => {
+          exportBtn.innerHTML = originalText;
+          exportBtn.style.background = '';
+        }, 2000);
+        
+        console.log(`✓ Exported ${dataToExport.length} rows to ${filename}`);
+        
+      } catch (error) {
+        console.error('Export error:', error);
+        alert('Error exporting data. Please try again.');
+      }
+    }
+
+    // Function to apply status styling
+    function getStatusHTML(status, type) {
+      if (type === 'document') {
+        if (status.toLowerCase().includes('approved')) return `<span class="status approved">Approved</span>`;
+        if (status.toLowerCase().includes('review') || status.toLowerCase().includes('pending')) return `<span class="status pending">In Review</span>`;
+        return `<span class="status rejected">WIP</span>`;
+      } else if (type === 'workflow') {
+        if (status.toLowerCase().includes('completed')) return `<span class="workflow-status completed">Completed</span>`;
+        if (status.toLowerCase().includes('progress')) return `<span class="workflow-status in-progress">In Progress</span>`;
+        return `<span class="workflow-status pending">Pending</span>`;
+      } else if (type === 'milestone') {
+        if (status.toLowerCase().includes('completed')) return `<span class="milestone-status completed">Completed</span>`;
+        if (status.toLowerCase().includes('progress')) return `<span class="milestone-status in-progress">In Progress</span>`;
+        return `<span class="milestone-status delayed">Delayed</span>`;
+      }
+      return status;
+    }
+
+    // Function to populate filter dropdowns
+    function populateFilters() {
+      if (!allData || allData.length === 0) {
+        console.log('No data available for filters');
+        return;
+      }
+      
+      const filterSelects = document.querySelectorAll('.column-filter');
+      
+      // Get actual column names from the data
+      const actualColumns = Object.keys(allData[0]);
+      console.log('Actual CSV columns:', actualColumns);
+      
+      // Column mapping for CSV data - expected column names
+      const expectedColumns = [
+        'Therapeutic Area',      // 0
+        'Drug',                  // 1  
+        'Dosage',               // 2
+        'Market',               // 3
+        'Document Name',        // 4
+        'Document ID',          // 5
+        'Approved Version',     // 6
+        'Document Status',      // 7
+        'Document Owner',       // 8
+        'Submission ID',        // 9
+        'Submission Workflow Step',        // 10
+        'Submission Workflow Step Status', // 11
+        'Submission Milestone',            // 12
+        'Submission Milestone Status'      // 13
+      ];
+      
+      filterSelects.forEach((select, index) => {
+        const columnIndex = parseInt(select.dataset.column);
+        const expectedColumnName = expectedColumns[columnIndex];
+        
+        // Try to find the actual column name - exact match first, then fuzzy match
+        let actualColumnName = actualColumns[columnIndex]; // fallback to index
+        
+        // Exact match
+        if (actualColumns.includes(expectedColumnName)) {
+          actualColumnName = expectedColumnName;
+        } else {
+          // Fuzzy match - look for similar column names
+          const normalizeString = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const expectedNormalized = normalizeString(expectedColumnName);
           
-          const milestoneSection = this.parentElement;
-          const toggleIcon = this.querySelector('.toggle-icon');
+          const fuzzyMatch = actualColumns.find(col => 
+            normalizeString(col) === expectedNormalized
+          );
           
-          milestoneSection.classList.toggle('expanded');
-          
-          if (milestoneSection.classList.contains('expanded')) {
-            toggleIcon.classList.remove('fa-chevron-down');
-            toggleIcon.classList.add('fa-chevron-up');
-          } else {
-            toggleIcon.classList.remove('fa-chevron-up');
-            toggleIcon.classList.add('fa-chevron-down');
+          if (fuzzyMatch) {
+            actualColumnName = fuzzyMatch;
+          }
+        }
+        
+        console.log(`Filter ${columnIndex}: Expected '${expectedColumnName}', Using '${actualColumnName}'`);
+        
+        // Get unique values for this column
+        const uniqueValues = [...new Set(allData.map(row => {
+          const value = row[actualColumnName] || '';
+          return typeof value === 'string' ? value.trim() : String(value || '').trim();
+        }).filter(val => val !== ''))].sort();
+        
+        console.log(`Column '${actualColumnName}' has ${uniqueValues.length} unique values`);
+        if (uniqueValues.length > 0) {
+          console.log('Sample values:', uniqueValues.slice(0, 3));
+        }
+        
+        // Clear existing options except "All"
+        select.innerHTML = '<option value="">All</option>';
+        
+        // Add unique values as options
+        uniqueValues.forEach(value => {
+          if (value && value.trim()) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value.length > 20 ? value.substring(0, 20) + '...' : value;
+            option.title = value; // Full text on hover
+            select.appendChild(option);
           }
         });
       });
-    });
+    }
 
-    // Dynamic milestone status update function
-    function updateMilestoneStatus(milestoneNumber, status) {
-      const currentMilestone = document.querySelector(`[data-milestone="${milestoneNumber}"]`);
-      const currentSelect = currentMilestone.querySelector('.milestone-status-select');
+    // Function to apply filters
+    function applyFilters() {
+      if (!allData || allData.length === 0) {
+        filteredData = [];
+        renderTable();
+        updateSearchStats(0, 0);
+        return;
+      }
       
-      // Update current milestone styling
-      currentSelect.className = `milestone-status-select status-${status}`;
+      // Get actual column names from the data
+      const actualColumns = Object.keys(allData[0]);
       
-      if (status === 'complete') {
-        // When current milestone is completed
-        const nextMilestone = document.querySelector(`[data-milestone="${milestoneNumber + 1}"]`);
+      // Expected column mapping for CSV data
+      const expectedColumns = [
+        'Therapeutic Area',      // 0
+        'Drug',                  // 1  
+        'Dosage',               // 2
+        'Market',               // 3
+        'Document Name',        // 4
+        'Document ID',          // 5
+        'Approved Version',     // 6
+        'Document Status',      // 7
+        'Document Owner',       // 8
+        'Submission ID',        // 9
+        'Submission Workflow Step',        // 10
+        'Submission Workflow Step Status', // 11
+        'Submission Milestone',            // 12
+        'Submission Milestone Status'      // 13
+      ];
+      
+      // Helper function to find the correct column name
+      function getActualColumnName(columnIndex) {
+        const expectedColumnName = expectedColumns[columnIndex];
         
-        if (nextMilestone) {
-          const nextSelect = nextMilestone.querySelector('.milestone-status-select');
+        // Try exact match first
+        if (actualColumns.includes(expectedColumnName)) {
+          return expectedColumnName;
+        }
+        
+        // Try fuzzy match
+        const normalizeString = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const expectedNormalized = normalizeString(expectedColumnName);
+        
+        const fuzzyMatch = actualColumns.find(col => 
+          normalizeString(col) === expectedNormalized
+        );
+        
+        return fuzzyMatch || actualColumns[columnIndex] || expectedColumnName;
+      }
+      
+      filteredData = allData.filter(row => {
+        // Apply global search filter first
+        if (globalSearchTerm && globalSearchTerm.trim()) {
+          const searchLower = globalSearchTerm.toLowerCase().trim();
+          const matchesSearch = Object.values(row).some(value => {
+            if (value === null || value === undefined) return false;
+            return String(value).toLowerCase().includes(searchLower);
+          });
+          if (!matchesSearch) return false;
+        }
+        
+        // Apply column filters
+        return Object.keys(currentFilters).every(columnIndex => {
+          const filterValue = currentFilters[columnIndex];
+          if (!filterValue) return true; // No filter applied
           
-          // Enable and activate next milestone
-          nextSelect.disabled = false;
-          nextSelect.innerHTML = `
-            <option value="ongoing">Ongoing</option>
-            <option value="complete">Complete</option>
-          `;
-          nextSelect.value = 'ongoing';
-          nextSelect.className = 'milestone-status-select status-ongoing';
-          nextSelect.onchange = () => updateMilestoneStatus(milestoneNumber + 1, nextSelect.value);
+          const actualColumnName = getActualColumnName(parseInt(columnIndex));
+          const rowValue = row[actualColumnName] || '';
           
-          // Expand next milestone (auto-behavior)
-          nextMilestone.classList.add('expanded');
-          const nextToggleIcon = nextMilestone.querySelector('.toggle-icon');
-          nextToggleIcon.classList.remove('fa-chevron-down');
-          nextToggleIcon.classList.add('fa-chevron-up');
+          return rowValue.toString().trim() === filterValue;
+        });
+      });
+      
+      console.log(`Applied filters: ${filteredData.length} rows from ${allData.length} total`);
+      
+      // Update search statistics
+      updateSearchStats(filteredData.length, allData.length);
+      
+      // Reset to first page when filters change
+      currentPage = 1;
+      renderTable();
+    }
+
+    // Function to apply status styling with null checks
+    function getStatusHTML(status, type) {
+      // Add null/undefined checks
+      if (!status || typeof status !== 'string') {
+        return '<span class="status">N/A</span>';
+      }
+      
+      const statusLower = status.toLowerCase();
+      
+      if (type === 'document') {
+        if (statusLower.includes('approved')) return `<span class="status approved">Approved</span>`;
+        if (statusLower.includes('review') || statusLower.includes('pending')) return `<span class="status pending">In Review</span>`;
+        return `<span class="status rejected">WIP</span>`;
+      } else if (type === 'workflow') {
+        if (statusLower.includes('completed')) return `<span class="workflow-status completed">Completed</span>`;
+        if (statusLower.includes('progress')) return `<span class="workflow-status in-progress">In Progress</span>`;
+        return `<span class="workflow-status pending">Pending</span>`;
+      } else if (type === 'milestone') {
+        if (statusLower.includes('completed')) return `<span class="milestone-status completed">Completed</span>`;
+        if (statusLower.includes('progress')) return `<span class="milestone-status in-progress">In Progress</span>`;
+        return `<span class="milestone-status delayed">Delayed</span>`;
+      }
+      return status;
+    }
+
+    // Function to render table with current data and pagination
+    function renderTable() {
+      const tbody = document.getElementById('prism-data-tbody');
+      tbody.innerHTML = '';
+      
+      if (!filteredData || filteredData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="14" style="text-align: center; padding: 40px; color: #999;">
+              <i class="fas fa-filter" style="margin-right: 10px;"></i>
+              No data matches the current filters
+            </td>
+          </tr>
+        `;
+        updatePagination(0);
+        return;
+      }
+      
+      // Get actual column names from the data
+      const actualColumns = filteredData.length > 0 ? Object.keys(filteredData[0]) : [];
+      
+      // Expected column mapping for CSV data
+      const expectedColumns = [
+        'Therapeutic Area',      // 0
+        'Drug',                  // 1  
+        'Dosage',               // 2
+        'Market',               // 3
+        'Document Name',        // 4
+        'Document ID',          // 5
+        'Approved Version',     // 6
+        'Document Status',      // 7
+        'Document Owner',       // 8
+        'Submission ID',        // 9
+        'Submission Workflow Step',        // 10
+        'Submission Workflow Step Status', // 11
+        'Submission Milestone',            // 12
+        'Submission Milestone Status'      // 13
+      ];
+      
+      // Helper function to find the correct column name
+      function getActualColumnName(columnIndex) {
+        const expectedColumnName = expectedColumns[columnIndex];
+        
+        // Try exact match first
+        if (actualColumns.includes(expectedColumnName)) {
+          return expectedColumnName;
+        }
+        
+        // Try fuzzy match
+        const normalizeString = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const expectedNormalized = normalizeString(expectedColumnName);
+        
+        const fuzzyMatch = actualColumns.find(col => 
+          normalizeString(col) === expectedNormalized
+        );
+        
+        return fuzzyMatch || actualColumns[columnIndex] || expectedColumnName;
+      }
+      
+      // Calculate pagination
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      const startIndex = (currentPage - 1) * rowsPerPage;
+      const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+      const currentPageData = filteredData.slice(startIndex, endIndex);
+      
+      // Render current page data with robust column matching
+      currentPageData.forEach(rowData => {
+        if (!rowData) {
+          console.warn('Invalid row data:', rowData);
+          return;
+        }
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${rowData[getActualColumnName(0)] || ''}</td>
+          <td>${rowData[getActualColumnName(1)] || ''}</td>
+          <td>${rowData[getActualColumnName(2)] || ''}</td>
+          <td>${rowData[getActualColumnName(3)] || ''}</td>
+          <td>${rowData[getActualColumnName(4)] || ''}</td>
+          <td>${rowData[getActualColumnName(5)] || ''}</td>
+          <td>${rowData[getActualColumnName(6)] || ''}</td>
+          <td>${getStatusHTML(rowData[getActualColumnName(7)], 'document')}</td>
+          <td>${rowData[getActualColumnName(8)] || ''}</td>
+          <td>${rowData[getActualColumnName(9)] || ''}</td>
+          <td>${rowData[getActualColumnName(10)] || ''}</td>
+          <td>${getStatusHTML(rowData[getActualColumnName(11)], 'workflow')}</td>
+          <td>${rowData[getActualColumnName(12)] || ''}</td>
+          <td>${getStatusHTML(rowData[getActualColumnName(13)], 'milestone')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      updatePagination(filteredData.length, currentPage, totalPages, startIndex + 1, endIndex);
+    }
+
+    // Function to update pagination info and controls
+    function updatePagination(totalCount, page = 1, totalPages = 1, startItem = 1, endItem = totalCount) {
+      const paginationInfo = document.querySelector('.pagination-info');
+      const paginationControls = document.querySelector('.pagination-controls');
+      
+      if (paginationInfo) {
+        if (totalCount === 0) {
+          paginationInfo.textContent = 'No entries found';
+        } else {
+          paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${totalCount} entries`;
+        }
+      }
+      
+      if (paginationControls) {
+        // Update pagination controls
+        const prevBtn = paginationControls.querySelector('.pagination-btn:first-child');
+        const nextBtn = paginationControls.querySelector('.pagination-btn:last-child');
+        const pageNumbers = paginationControls.querySelector('.page-numbers');
+        
+        // Enable/disable previous button
+        if (prevBtn) {
+          prevBtn.disabled = page <= 1;
+        }
+        
+        // Enable/disable next button
+        if (nextBtn) {
+          nextBtn.disabled = page >= totalPages;
+        }
+        
+        // Generate page numbers
+        if (pageNumbers) {
+          pageNumbers.innerHTML = generatePageNumbers(page, totalPages);
+        }
+      }
+    }
+    
+    // Function to generate page number buttons
+    function generatePageNumbers(currentPage, totalPages) {
+      let html = '';
+      
+      if (totalPages <= 7) {
+        // Show all pages if total is 7 or less
+        for (let i = 1; i <= totalPages; i++) {
+          html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        }
+      } else {
+        // Show smart pagination with ellipsis
+        if (currentPage <= 3) {
+          // Show first 3 pages, ellipsis, last page
+          for (let i = 1; i <= 3; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+          }
+          html += `<span>...</span>`;
+          html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+        } else if (currentPage >= totalPages - 2) {
+          // Show first page, ellipsis, last 3 pages
+          html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+          html += `<span>...</span>`;
+          for (let i = totalPages - 2; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+          }
+        } else {
+          // Show first page, ellipsis, current-1, current, current+1, ellipsis, last page
+          html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+          html += `<span>...</span>`;
+          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+          }
+          html += `<span>...</span>`;
+          html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+        }
+      }
+      
+      return html;
+    }
+    
+    // Function to go to specific page
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderTable();
+      }
+    }
+    
+    // Function to go to previous page
+    function previousPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    }
+    
+    // Function to go to next page
+    function nextPage() {
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
+    }
+
+    // Function to setup filter event listeners
+    function setupFilterListeners() {
+      const filterSelects = document.querySelectorAll('.column-filter');
+      const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+      
+      filterSelects.forEach((select, index) => {
+        select.addEventListener('change', function() {
+          const columnIndex = this.dataset.column;
+          const filterValue = this.value;
+          const container = this.closest('.filter-container');
           
-          // Auto-collapse current milestone when moving to next (but allow manual override)
-          currentMilestone.classList.remove('expanded');
-          const currentToggleIcon = currentMilestone.querySelector('.toggle-icon');
-          currentToggleIcon.classList.remove('fa-chevron-up');
-          currentToggleIcon.classList.add('fa-chevron-down');
+          if (filterValue) {
+            currentFilters[columnIndex] = filterValue;
+            this.classList.add('active');
+            container.classList.add('has-filter');
+          } else {
+            delete currentFilters[columnIndex];
+            this.classList.remove('active');
+            container.classList.remove('has-filter');
+          }
           
-          // Auto-collapse all previous milestones (but allow manual override)
-          for (let i = 1; i < milestoneNumber; i++) {
-            const previousMilestone = document.querySelector(`[data-milestone="${i}"]`);
-            if (previousMilestone) {
-              previousMilestone.classList.remove('expanded');
-              const previousToggleIcon = previousMilestone.querySelector('.toggle-icon');
-              previousToggleIcon.classList.remove('fa-chevron-up');
-              previousToggleIcon.classList.add('fa-chevron-down');
+          // Show/hide clear filters button
+          const hasActiveFilters = Object.keys(currentFilters).length > 0;
+          if (clearFiltersBtn) {
+            clearFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+          }
+          
+          applyFilters();
+        });
+      });
+      
+      // Clear all filters button
+      if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+          currentFilters = {};
+          
+          // Reset all filter dropdowns
+          filterSelects.forEach(select => {
+            select.value = '';
+            select.classList.remove('active');
+            select.closest('.filter-container').classList.remove('has-filter');
+          });
+          
+          // Hide clear button
+          this.style.display = 'none';
+          
+          // Reset to show all data and first page
+          filteredData = [...allData];
+          currentPage = 1;
+          renderTable();
+        });
+      }
+    }
+
+    // Function to setup global search functionality
+    function setupSearchFunctionality() {
+      const searchInput = document.getElementById('globalSearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      
+      if (searchInput) {
+        // Real-time search with debounce
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            globalSearchTerm = this.value;
+            
+            // Show/hide clear button
+            if (clearSearchBtn) {
+              clearSearchBtn.style.display = globalSearchTerm.trim() ? 'block' : 'none';
+            }
+            
+            applyFilters();
+          }, 300); // 300ms debounce
+        });
+        
+        // Handle Enter key
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            globalSearchTerm = this.value;
+            if (clearSearchBtn) {
+              clearSearchBtn.style.display = globalSearchTerm.trim() ? 'block' : 'none';
+            }
+            applyFilters();
+          }
+        });
+      }
+      
+      // Clear search button
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+          globalSearchTerm = '';
+          if (searchInput) {
+            searchInput.value = '';
+          }
+          this.style.display = 'none';
+          applyFilters();
+        });
+      }
+    }
+
+    // Function to update search statistics
+    function updateSearchStats(filteredCount, totalCount) {
+      const searchStats = document.getElementById('searchStats');
+      if (searchStats) {
+        if (globalSearchTerm && globalSearchTerm.trim()) {
+          searchStats.textContent = `Found ${filteredCount} of ${totalCount} records matching "${globalSearchTerm}"`;
+          searchStats.style.display = 'block';
+        } else if (Object.keys(currentFilters).length > 0) {
+          searchStats.textContent = `Filtered ${filteredCount} of ${totalCount} records`;
+          searchStats.style.display = 'block';
+        } else {
+          searchStats.textContent = '';
+          searchStats.style.display = 'none';
+        }
+      }
+    }
+    
+    // Function to setup pagination listeners
+    function setupPaginationListeners() {
+      // Previous and Next buttons are handled by onclick attributes
+      // Page number buttons are generated dynamically with onclick attributes
+      console.log('✅ Pagination listeners ready');
+    }
+
+    // S3 Configuration for CSV
+    const S3_CONFIG = {
+      bucketName: 'prism-database-excel',
+      region: 'us-east-1',
+      fileName: 'prism-data.csv',
+      get url() {
+        return `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${encodeURIComponent(this.fileName)}`;
+      }
+    };
+
+    // Function to parse CSV data with better error handling
+    function parseCSV(csvText) {
+      try {
+        const lines = csvText.split('\n').filter(line => line.trim());
+        
+        if (lines.length === 0) {
+          throw new Error('CSV file is empty');
+        }
+        
+        // Parse headers
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        console.log('CSV Headers:', headers);
+        
+        const data = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          const values = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              values.push(current.trim().replace(/"/g, ''));
+              current = '';
+            } else {
+              current += char;
             }
           }
-        }
-        
-        // Keep the complete option but allow changing back if needed
-        currentSelect.innerHTML = `
-          <option value="complete">Complete</option>
-          <option value="ongoing">Ongoing</option>
-        `;
-        
-      } else if (status === 'ongoing') {
-        // If set back to ongoing, reset all subsequent milestones
-        for (let i = milestoneNumber + 1; i <= 6; i++) {
-          const subsequentMilestone = document.querySelector(`[data-milestone="${i}"]`);
-          if (subsequentMilestone) {
-            const subsequentSelect = subsequentMilestone.querySelector('.milestone-status-select');
-            
-            // Reset to disabled yet-to-start
-            subsequentSelect.disabled = true;
-            subsequentSelect.innerHTML = `<option value="yet-to-start">Yet-to-Start</option>`;
-            subsequentSelect.value = 'yet-to-start';
-            subsequentSelect.className = 'milestone-status-select status-yet-to-start';
-            subsequentSelect.onchange = null;
-            
-            // Collapse subsequent milestones
-            subsequentMilestone.classList.remove('expanded');
-            const subsequentToggleIcon = subsequentMilestone.querySelector('.toggle-icon');
-            subsequentToggleIcon.classList.remove('fa-chevron-up');
-            subsequentToggleIcon.classList.add('fa-chevron-down');
+          values.push(current.trim().replace(/"/g, ''));
+          
+          // Ensure we have the expected number of columns (pad with empty strings if needed)
+          while (values.length < 14) {
+            values.push('');
+          }
+          
+          // Only add rows that have some data
+          if (values.some(val => val && val.trim())) {
+            const obj = {};
+            headers.forEach((header, index) => {
+              obj[header] = values[index] || '';
+            });
+            data.push(obj);
           }
         }
         
-        // Ensure current milestone stays expanded when it becomes ongoing
-        currentMilestone.classList.add('expanded');
-        const currentToggleIcon = currentMilestone.querySelector('.toggle-icon');
-        currentToggleIcon.classList.remove('fa-chevron-down');
-        currentToggleIcon.classList.add('fa-chevron-up');
+        console.log(`Parsed ${data.length} rows from CSV`);
+        return data;
         
-        // Auto-collapse previous milestones (but allow manual override)
-        for (let i = 1; i < milestoneNumber; i++) {
-          const previousMilestone = document.querySelector(`[data-milestone="${i}"]`);
-          if (previousMilestone) {
-            previousMilestone.classList.remove('expanded');
-            const previousToggleIcon = previousMilestone.querySelector('.toggle-icon');
-            previousToggleIcon.classList.remove('fa-chevron-up');
-            previousToggleIcon.classList.add('fa-chevron-down');
+      } catch (error) {
+        console.error('Error parsing CSV:', error);
+        throw new Error(`CSV parsing failed: ${error.message}`);
+      }
+    }
+
+    // Function to fetch and parse CSV data from S3
+    async function fetchDataFromS3() {
+      try {
+        console.log('🔄 Fetching CSV data from S3:', S3_CONFIG.url);
+        
+        const response = await fetch(S3_CONFIG.url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/csv,text/plain,*/*'
           }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const csvText = await response.text();
+        
+        if (!csvText || csvText.trim().length === 0) {
+          throw new Error('Received empty CSV file from S3');
+        }
+        
+        console.log('CSV file size:', csvText.length, 'characters');
+        console.log('First 200 characters:', csvText.substring(0, 200));
+        
+        const formattedData = parseCSV(csvText);
+
+        if (!formattedData || formattedData.length === 0) {
+          throw new Error('No valid data rows found in CSV file');
+        }
+
+        console.log(`✅ Successfully loaded ${formattedData.length} records from S3 CSV`);
+        return formattedData;
+        
+      } catch (error) {
+        console.error('❌ Error fetching CSV data from S3:', error);
+        
+        if (error.message.includes('403')) {
+          throw new Error('S3 Access Denied (403): Make CSV file public in S3 bucket');
+        } else if (error.message.includes('404')) {
+          throw new Error('S3 File Not Found (404): Check if prism-data.csv exists in bucket');
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          throw new Error('Network Error: Check internet connection and S3 URL');
+        } else {
+          throw error;
         }
       }
     }
 
-    // Initialize the workflow on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      const milestoneHeaders = document.querySelectorAll('.milestone-header');
-      
-      milestoneHeaders.forEach(header => {
-        header.addEventListener('click', function(e) {
-          // Don't toggle if clicking on the select dropdown
-          if (e.target.tagName === 'SELECT' || e.target.closest('select')) return;
+    // Main function to load data from S3
+    async function loadPrismData() {
+      try {
+        // Show loading state
+        showLoadingMessage();
+        
+        // Fetch data from S3
+        const s3Data = await fetchDataFromS3();
+        
+        if (!s3Data || !s3Data.length) {
+          showErrorMessage('No data found in S3 bucket');
+          return;
+        }
+        
+        // Store all data globally
+        allData = [...s3Data];
+        filteredData = [...allData];
+        
+        // Debug: Log first few rows to see data structure
+        console.log('First 3 data rows:', allData.slice(0, 3));
+        console.log('Data keys (first row):', allData[0] ? Object.keys(allData[0]) : 'No data');
+        
+        // Check for specific columns that are reported as blank
+        if (allData.length > 0) {
+          const firstRow = allData[0];
+          console.log('First row values for problem columns:');
+          console.log('- Submission Workflow Step:', firstRow['Submission Workflow Step']);
+          console.log('- Available keys:', Object.keys(firstRow));
           
-          // Only toggle if clicking on the arrow icon or header area (not dropdown)
-          if (e.target.classList.contains('toggle-icon') || 
-              e.target.classList.contains('milestone-header') ||
-              (!e.target.closest('.milestone-status'))) {
-            
-            const milestoneSection = this.parentElement;
-            const toggleIcon = this.querySelector('.toggle-icon');
-            
-            // Always allow manual toggle regardless of milestone status
-            milestoneSection.classList.toggle('expanded');
-            
-            if (milestoneSection.classList.contains('expanded')) {
-              toggleIcon.classList.remove('fa-chevron-down');
-              toggleIcon.classList.add('fa-chevron-up');
-            } else {
-              toggleIcon.classList.remove('fa-chevron-up');
-              toggleIcon.classList.add('fa-chevron-down');
-            }
-          }
-        });
-      });
-      
-      // Also add specific click handlers for the arrow icons
-      const toggleIcons = document.querySelectorAll('.toggle-icon');
-      toggleIcons.forEach(icon => {
-        icon.addEventListener('click', function(e) {
-          e.stopPropagation(); // Prevent the header click from firing
-          
-          const milestoneSection = this.closest('.milestone-section');
-          const toggleIcon = this;
-          
-          // Always allow manual toggle
-          milestoneSection.classList.toggle('expanded');
-          
-          if (milestoneSection.classList.contains('expanded')) {
-            toggleIcon.classList.remove('fa-chevron-down');
-            toggleIcon.classList.add('fa-chevron-up');
-          } else {
-            toggleIcon.classList.remove('fa-chevron-up');
-            toggleIcon.classList.add('fa-chevron-down');
-          }
-        });
-      });
-    });
+          // Check if any key is similar to "Submission Workflow Step"
+          const similarKeys = Object.keys(firstRow).filter(key => 
+            key.toLowerCase().includes('workflow') || 
+            key.toLowerCase().includes('submission')
+          );
+          console.log('- Keys containing workflow/submission:', similarKeys);
+        }
+        
+        // Populate filter dropdowns
+        populateFilters();
+        
+        // Setup filter event listeners
+        setupFilterListeners();
+        
+        // Setup global search functionality
+        setupSearchFunctionality();
+        
+        // Setup export button
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+          exportBtn.addEventListener('click', exportToExcel);
+        }
+        
+        // Setup pagination event listeners
+        setupPaginationListeners();
+        
+        // Initial render
+        renderTable();
+        
+        console.log(`✅ Loaded ${allData.length} pharmaceutical records from S3 CSV with filtering and export enabled`);
+      } catch (error) {
+        console.error('❌ Error loading data from S3:', error);
+        showErrorMessage(`Failed to load data from S3: ${error.message}`);
+      }
+    }
+    
+    function showLoadingMessage() {
+      document.getElementById('prism-data-tbody').innerHTML = `
+        <tr>
+          <td colspan="14" style="text-align: center; padding: 40px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+              <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3e9ca8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+              <p style="margin: 0; color: #3e9ca8; font-weight: bold;">Loading CSV data from AWS S3...</p>
+              <p style="margin: 0; color: #666; font-size: 12px;">Fetching latest pharmaceutical records from CSV file</p>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    
+    function showErrorMessage(message = 'Unable to load pharmaceutical data from S3') {
+      document.getElementById('prism-data-tbody').innerHTML = `
+        <tr>
+          <td colspan="14" style="text-align: center; padding: 40px; color: #ff6b6b;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+              <p style="margin: 0; font-weight: bold;">${message}</p>
+              <button onclick="loadPrismData()" style="padding: 8px 16px; background: #3e9ca8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                <i class="fas fa-refresh" style="margin-right: 5px;"></i>Retry
+              </button>
+              <p style="margin: 0; font-size: 12px; color: #666;">
+                Check S3 bucket permissions and CORS configuration
+              </p>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', loadPrismData);
   </script>
 </body>
 </html>
